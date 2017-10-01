@@ -1,12 +1,11 @@
-# Button Based Delay
-Now that you have begun to familiarize yourself with the TIMER modules, why don't we make an interesting change to our code from the last lab.
+#Button Based Delay
+By Bryan Regn
+Last updated 10/1/2017
 
-## Task
-Setup your microcontroller to initially blink and LED at a rate of 10Hz upon restarting or powering up. Then utilizing one of the buttons on board, a user should be able to set the delay or blinking rate of the LED by holding down a button. The duration in which the button is depressed should then become the new rate at which the LED blinks. As previously stated, you most likely will want to take advantage of the fact that TIMER modules exist and see if you can let them do a bulk of the work for you.
-
-### Extra Work
-## Reset Button
-What is a piece of electronics without a reset button? Instead of relying on resetting your processor using the built in reset circuitry, why not instead use another button to reset the rate back to 10Hz.
-
-## Button Based Hertz
-Most likely using two buttons, what if instead of making a delay loop based on the time, the user could instead enter a mode where the number of times they pressed the button would become the number in Hz of the blinking rate? How do you think you would implement that with just one button?
+Interupt enable had to be set for the button and initially set to trigger on falling edge to catch the first button press.
+CCR0 is used in the up counting mode so that had to be enabled with line 26. The value that the register compares itself was set on the line after that at a rate that made the led blink at 10Hz.
+Line 28 sets up the timer by using SMCLK, dividing that by 8, setting it to count in up mode, and it clears Timer A's Register. 
+In the timer interupt vector the led is toggeled. 
+The button interupt evaluates if the button is pressed or not. If the button is pressed it sets the interupt edge select to trigger on the rising edge or button release. The timer is also cleared because the button was just pressed. Lastly it clears the interupt flag.
+If the button was not pressed it changes the interupt edge select to trigger. The value of the CCR0 is changed to the value of the timer, and lastly it clears the interupt flag. 
+Only differences between the board's code was that for the F2311 Timer B was used instead of Timer A. 
