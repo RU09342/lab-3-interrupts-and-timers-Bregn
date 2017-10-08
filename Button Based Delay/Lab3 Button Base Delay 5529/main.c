@@ -1,6 +1,6 @@
 #include <msp430.h> 
 //By Bryan Regn
-//Last Updated: 10/1
+//Last Updated: 10/7
 
 /**
  * main.c
@@ -22,7 +22,7 @@ int main(void)
 
     TA0CCTL0 = CCIE; // CCR0 interrupt enabled
     TA0CCR0 = 6000; //register that timer will compare itself too
-    TA0CTL = TASSEL_2 + ID_3 + MC_1 + TACLR; // SMCLK, divide clock by 8, upmode, clear TAR
+    TA0CTL = TASSEL_2 + ID_3 + MC_1 + TACLR; // SMCLK, divide clock by 8, up mode, clear TAR
 
     for(;;){}
     return 0;
@@ -30,16 +30,17 @@ int main(void)
 
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void){
-    if (P1IN&BIT1==0x0000) //if button pressed
+    if ((P1IN&BIT1)==0x0000) //if button pressed
     {
-        P1IES &= ~BIT1; //sets interupt to trigger on rising edge (button release)
-    TA0R = 0x0000; //clear timer
+    P1IES &= ~BIT1; //sets interupt to trigger on rising edge (button release)
+    TA0CTL = TASSEL_2 + ID_3 + MC_2 + TACLR; // SMCLK, divide clock by 8, continous mode, clear TAR
     P1IFG &= ~BIT1; //clear interupt flag
     }
     else //if button released
     {
     P1IES |= BIT1; //sets interupt to trigger on falling edge (button press)
     TA0CCR0 = TA0R; //changes ccr0 to value of timer
+    TA0CTL = TASSEL_2 + ID_3 + MC_1 + TACLR; // SMCLK, divide clock by 8, up mode, clear TAR
     P1IFG &= ~BIT1; //clears interupt flag
     }
 }

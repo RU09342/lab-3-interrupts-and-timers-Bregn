@@ -1,6 +1,6 @@
 #include <msp430.h> 
 //By Bryan Regn
-//Last Updated: 10/1
+//Last Updated: 10/7
 
 /**
  * main.c
@@ -33,16 +33,17 @@ int main(void)
 
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void){
-    if (P1IN&BIT1==0x0000) //if button pressed
+    if ((P1IN&BIT1)==0x0000) //if button pressed
     {
-        P1IES &= ~BIT1; //sets interupt to trigger on rising edge (button release)
-    TB0R = 0x0000; //clear timer
+    P1IES &= ~BIT1; //sets interupt to trigger on rising edge (button release)
+    TB0CTL = TBSSEL_2 + ID_3 + MC_2 + TBCLR; // SMCLK, divide clock by 8, continous mode, clear TAR
     P1IFG &= ~BIT1; //clear interupt flag
     }
     else //if button released
     {
     P1IES |= BIT1; //sets interupt to trigger on falling edge (button press)
     TB0CCR0 = TB0R; //changes ccr0 to value of timer
+    TB0CTL = TBSSEL_2 + ID_3 + MC_1 + TBCLR; // SMCLK, divide clock by 8, upmode, clear TAR
     P1IFG &= ~BIT1; //clears interupt flag
     }
 }
